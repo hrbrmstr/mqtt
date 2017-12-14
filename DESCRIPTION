@@ -1,6 +1,6 @@
 Package: mqtt
 Type: Package
-Title: mqtt title goes here otherwise CRAN checks fail
+Title: Interoperate with 'MQTT' Message Brokers
 Version: 0.1.0
 Date: 2017-12-14
 Authors@R: c(
@@ -9,7 +9,16 @@ Authors@R: c(
   )
 Author: Bob Rudis (bob@rud.is)
 Maintainer: Bob Rudis <bob@rud.is>
-Description: A good description goes here otherwise CRAN checks fail.
+Description: 'MQTT' is a machine-to-machine ('M2M')/"Internet of Things" connectivity 
+    protocol. It was designed as an extremely lightweight publish/subscribe messaging 
+    transport. It is useful for connections with remote locations where a small code 
+    footprint is required and/or network bandwidth is at a premium. For example, it has 
+    been used in sensors communicating to a broker via satellite link, over occasional 
+    dial-up connections with healthcare providers, and in a range of home automation and
+    small device scenarios. It is also ideal for mobile applications because of its small
+    size, low power usage, minimised data packets, and efficient distribution of
+    information to one or many receivers. Tools are provided to interoperate with 'MQTT' 
+    message brokers in R.
 URL: https://github.com/hrbrmstr/mqtt
 BugReports: https://github.com/hrbrmstr/mqtt/issues
 SystemRequirements: C++11
@@ -20,7 +29,6 @@ Suggests:
 Depends:
     R (>= 3.2.0)
 Imports:
-    purrr,
     Rcpp
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp

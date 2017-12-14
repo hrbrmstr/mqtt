@@ -41,9 +41,9 @@ node *lstail = &rcb_list;
 using namespace Rcpp;
 
 static bool m_init = false;
-// static int run = 1;
+static int run = 1;
 
-// void handle_signal(int s) { run = 0; }
+void handle_signal(int s) { run = 0; }
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 
@@ -58,35 +58,35 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
   RMQTTCallback *callback_ptr = (RMQTTCallback *)obj;
   RMQTTCallback callback_obj = *callback_ptr;
 
- bool ret = callback_obj.call_msg_cb(message);
+  bool end_session = callback_obj.call_msg_cb(message);
 
- if (ret) mosquitto_disconnect(mosq);
+  if (end_session | (!run)) mosquitto_disconnect(mosq);
 
 }
 
-//' Get mosquitto library version
-//'
+// Get mosquitto library version
+//
 // [[Rcpp::export]]
 std::string mqtt_version() {
   int maj, min, rev, ret = mosquitto_lib_version(&maj, &min, &rev);
   return(std::to_string(maj) + "." + std::to_string(min) + "." + std::to_string(rev));
 };
 
-//' Get mosquitto library version
-//'
+// Get mosquitto library version
+//
 // [[Rcpp::export]]
 bool mqtt_init() {
   m_init = (mosquitto_lib_init() == 0);
   return(m_init);
 };
 
-//' Free resources when done
-//'
+// Free resources when done
+//
 // [[Rcpp::export]]
 bool mqtt_free() { return(mosquitto_lib_cleanup() == 0); };
 
 // [[Rcpp::export]]
-void subscribe(
+void subscribe_(
     std::string host, int port, int keepalive,
     std::string client_id, std::string topic, int qos,
     Rcpp::Function connection_cb, Rcpp::Function message_cb
@@ -95,11 +95,11 @@ void subscribe(
   // char clientid[24];
   struct mosquitto *mosq;
   int rc = 0;
-  //
-  // signal(SIGINT, handle_signal);
-  // signal(SIGTERM, handle_signal);
 
-  if (!m_init) mosquitto_lib_init();
+  signal(SIGINT, handle_signal);
+  signal(SIGTERM, handle_signal);
+
+  mosquitto_lib_init();
 
   RMQTTCallback rcb = RMQTTCallback();
   lstail->rcb = rcb;
