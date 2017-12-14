@@ -1,53 +1,20 @@
-#' mqtt default connection callback function
-#'
-#' This will be set by default if no parameter is specified to
-#' connection functions. If you use your own function, it should
-#' be modeled after this one (i.e. take the same function signature).
-#'
-#' @param result the return code of the connection response, one of:
-#' - `0`: success
-#' - `1` : connection refused (unacceptable protocol version)
-#' - `2` : connection refused (identifier rejected)
-#' - `3` : connection refused (broker unavailable)
-#' - `4-255` : reserved for future use
-#' @export
-mqtt_default_connection_callback <- function(result) {
-  message(sprintf("Default connect callback result: %s", result))
-}
-
-.def_msg_max <- 50
-.def_msg_count <- 0
-
-#' mqtt default message callback function
-#'
-#' This will be set by default if no parameter is specified to
-#' connection functions. If you use your own function, it should
-#' be modeled after this one (i.e. take the same function signature).\cr
-#' \cr
-#' This default function will display messages and quit after 50 messages have
-#' been received.
-#'
-#' @section Special Functionality:
-#' If a message callback function returns the string "`quit`", then the MQTT
-#' connection will be closed. This makes it possible to subscribe to a topic,
-#' keep track of messages and stop processing when a known message is received
-#' or after a certain number of messages (you need to keep track of the latter
-#' yourself).
-#'
-#' @param id the message id
-#' @param topic the message topic
-#' @param payload the message payload (raw)
-#' @param qos the effective qos for the message
-#' @param retain is this message marked as "retain"?
-mqtt_default_message_callback <- function(id, topic, payload, qos, retain) {
-  .def_msg_count <<- .def_msg_count + 1
-  message(readBin(payload, "character"))
-  return(if (.def_msg_count == .def_msg_max) "quit" else "continue")
-}
-
 #' Subscribe to an MQTT Topic
 #'
+#' See [mqtt_default_connection_callback()] and [mqtt_default_message_callback()]
+#' for more information on callbacks
+#'
+#' @section Topics:
+#' A topic is a UTF-8 string used by the broker to filter messages for
+#' subscription. They consist of one or more topic levels. Each level is separated
+#' by a forward slash --- `/` --- (a.k.a. the topic level separator). They topic
+#' components can contain spaces.\cr
+#' \cr
+#' Topics can have wildcards. For the moment, you can visit the
+#' [official documentation section](http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718106)
+#' on specifying topics. Similar examples will eventually be in a vignette.
+#'
 #' @md
+#' @note TODO authentication & encryption support
 #' @param host,port host (character) and port (integer) to connect to. Defaults to
 #'        "`test.mosquitto.org`".
 #' @param client_id the client id to use. Defaults to "`r_mqtt`".
@@ -57,6 +24,12 @@ mqtt_default_message_callback <- function(id, topic, payload, qos, retain) {
 #'        Defaults to `60`
 #' @param qos integer value `0`, `1` or `2` indicating the Quality of Service to be used for
 #'        the message.
+#' @param message_callback your R worker function for messages. See [mqtt_default_connection_callback()]
+#'        for more details on how to write your own. That one is the default.
+#' @param connection_callback you can use the package-provided [mqtt_silent_connection_callback()]
+#'        if you do not want any message printed at startup. It defaults
+#'        to using a package-provided [mqtt_default_connection_callback()] which
+#'        will use `message()` to print out a one-line diagnostic message.
 #' @export
 topic_subscribe <- function(host="test.mosquitto.org", port=1883L,
                             client_id="r_mqtt", topic="#",
@@ -70,8 +43,3 @@ topic_subscribe <- function(host="test.mosquitto.org", port=1883L,
   )
 
 }
-# void subscribe_(
-#     std::string host, int port, int keepalive,
-#     std::string client_id, std::string topic, int qos,
-#     Rcpp::Function connection_cb, Rcpp::Function message_cb
-#   ) {

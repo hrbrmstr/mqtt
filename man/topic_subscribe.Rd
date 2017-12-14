@@ -2,7 +2,7 @@
 % Please edit documentation in R/subscribe.R
 \name{topic_subscribe}
 \alias{topic_subscribe}
-\title{Subscribe to a MQTT Topic}
+\title{Subscribe to an MQTT Topic}
 \usage{
 topic_subscribe(host = "test.mosquitto.org", port = 1883L,
   client_id = "r_mqtt", topic = "#", keepalive = 60L, qos = 0L,
@@ -23,7 +23,31 @@ Defaults to \code{60}}
 
 \item{qos}{integer value \code{0}, \code{1} or \code{2} indicating the Quality of Service to be used for
 the message.}
+
+\item{message_callback}{your R worker function for messages. See \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}}
+for more details on how to write your own. That one is the default.}
+
+\item{connection_callback}{you can use the package-provided \code{\link[=mqtt_silent_connection_callback]{mqtt_silent_connection_callback()}}
+if you do not want any message printed at startup. It defaults
+to using a package-provided \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}} which
+will use \code{message()} to print out a one-line diagnostic message.}
 }
 \description{
-Subscribe to a MQTT Topic
+See \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}} and \code{\link[=mqtt_default_message_callback]{mqtt_default_message_callback()}}
+for more information on callbacks
 }
+\note{
+TODO authentication & encryption support
+}
+\section{Topics}{
+
+A topic is a UTF-8 string used by the broker to filter messages for
+subscription. They consist of one or more topic levels. Each level is separated
+by a forward slash --- \code{/} --- (a.k.a. the topic level separator). They topic
+components can contain spaces.\cr
+\cr
+Topics can have wildcards. For the moment, you can visit the
+\href{http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718106}{official documentation section}
+on specifying topics. Similar examples will eventually be in a vignette.
+}
+

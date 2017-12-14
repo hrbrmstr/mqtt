@@ -6,30 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <mosquitto.h>
+#include "mqtt-defs.h"
 
-class RMQTTCallback {
-public:
-  void set_connect_callback(Rcpp::Function f) { conn_cb_func = f; };
-  void set_message_callback(Rcpp::Function f) { msg_cb_func = f; };
-  void call_conn_cb(int result) {
-    conn_cb_func(result);
-  };
-  bool call_msg_cb(const struct mosquitto_message *message) {
-    Rcpp::CharacterVector ret = msg_cb_func(
-      message->mid,
-      std::string(message->topic),
-      Rcpp::RawVector((unsigned char *)message->payload, ((unsigned char *)message->payload)+message->payloadlen),
-      message->qos,
-      message->retain
-    );
-    return(ret[0] == "quit");
-  };
-private:
-  Rcpp::Function conn_cb_func = Rcpp::Environment::base_env()["cat"];
-  Rcpp::Function msg_cb_func = Rcpp::Environment::base_env()["cat"];
-};
-
+// we may be able to support more than one operation in the future so plan
+// for it here.
+// TODO disposal
 struct node {
   RMQTTCallback rcb ;
   node *next;
@@ -40,19 +21,34 @@ node *lstail = &rcb_list;
 
 using namespace Rcpp;
 
-static bool m_init = false;
-static int run = 1;
+static bool m_init = false; // TODO see if we really need this flag for intialization
+static int run = 1; // if this goes to 0 (has a system interrupt) while an event loop is running, it will terminate
 
-void handle_signal(int s) { run = 0; }
+void handle_signal(int s) { run = 0; } // handle interrupt for ^^
 
+// callback shell
+//
+// `obj` gets setup during the connection and points to a RMQTTCallback object
+// which enables it to pluck out R things it needs so we can write
+// callbacks in R vs C
 void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 
   RMQTTCallback *callback_ptr = (RMQTTCallback *)obj;
   RMQTTCallback callback_obj = *callback_ptr;
+
   callback_obj.call_conn_cb(result);
 
 }
 
+// callback shell
+//
+// `obj` gets setup during the connection and points to a RMQTTCallback object
+// which enables it to pluck out R things it needs so we can write
+// callbacks in R vs C
+//
+// special sauce here to watch for a return value from the object wrapper
+// so it can issue a disconnect and stop looping. this can also happen
+// if a special interrupt is triggered.
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
 
   RMQTTCallback *callback_ptr = (RMQTTCallback *)obj;
@@ -66,13 +62,18 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
 // Get mosquitto library version
 //
+// Internal only function unlikely to get exposed to the user
+//
 // [[Rcpp::export]]
 std::string mqtt_version() {
-  int maj, min, rev, ret = mosquitto_lib_version(&maj, &min, &rev);
+  int maj, min, rev;
+  (void)mosquitto_lib_version(&maj, &min, &rev);
   return(std::to_string(maj) + "." + std::to_string(min) + "." + std::to_string(rev));
 };
 
-// Get mosquitto library version
+// Init the mosquitto library
+//
+// May expose this if an R DSL for the library is exposed
 //
 // [[Rcpp::export]]
 bool mqtt_init() {
@@ -82,9 +83,19 @@ bool mqtt_init() {
 
 // Free resources when done
 //
+// May expose this if an R DSL for the library is exposed
+//
 // [[Rcpp::export]]
 bool mqtt_free() { return(mosquitto_lib_cleanup() == 0); };
 
+
+// The core function
+//
+// subscribe to a topic on an MQTT server
+//
+// TODO authentication support
+// TODO encryption support
+//
 // [[Rcpp::export]]
 void subscribe_(
     std::string host, int port, int keepalive,
@@ -92,7 +103,6 @@ void subscribe_(
     Rcpp::Function connection_cb, Rcpp::Function message_cb
   ) {
 
-  // char clientid[24];
   struct mosquitto *mosq;
   int rc = 0;
 
@@ -124,15 +134,6 @@ void subscribe_(
     mosquitto_subscribe(mosq, NULL, topic.c_str(), qos);
 
     mosquitto_loop_forever(mosq, -1, 1);
-
-    // while(run) {
-    //   rc = mosquitto_loop(mosq, -1, 1);
-    //   if(run && rc) {
-    //     printf("connection error!\n");
-    //     sleep(10);
-    //     mosquitto_reconnect(mosq);
-    //   }
-    // }
 
     mosquitto_destroy(mosq);
 
