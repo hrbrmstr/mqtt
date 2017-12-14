@@ -1,0 +1,26 @@
+Package: mqtt
+Type: Package
+Title: mqtt title goes here otherwise CRAN checks fail
+Version: 0.1.0
+Date: 2017-12-14
+Authors@R: c(
+    person("Bob", "Rudis", email = "bob@rud.is", role = c("aut", "cre"), 
+           comment = c(ORCID = "0000-0001-5670-2640"))
+  )
+Author: Bob Rudis (bob@rud.is)
+Maintainer: Bob Rudis <bob@rud.is>
+Description: A good description goes here otherwise CRAN checks fail.
+URL: https://github.com/hrbrmstr/mqtt
+BugReports: https://github.com/hrbrmstr/mqtt/issues
+SystemRequirements: C++11
+License: AGPL
+Suggests:
+    testthat,
+    covr
+Depends:
+    R (>= 3.2.0)
+Imports:
+    purrr,
+    Rcpp
+RoxygenNote: 6.0.1
+LinkingTo: Rcpp
