@@ -17,6 +17,24 @@ size, low power usage, minimised data packets, and efficient
 distribution of information to one or many receivers. Tools are provided
 to interoperate with ‘MQTT’ message brokers in R.
 
+## What You Need To Get This Working
+
+You need to install the [`mosquitto`
+libraries](https://mosquitto.org/download/) and ensure they’re on your
+system `PATH` so R can find them. This will be easier in the future, but
+coarse for the moment.
+
+For macOS, that’s as easy as:
+
+    brew install mosquitto
+
+For Debian/Ubuntu, it will be something like:
+
+    sudo apt install libmosquitto-dev
+
+For Windows folks: install Linux or get a mac ;-) Seriously, I’m hoping
+to have support for that soon.
+
 ## Current Functionality
 
 You can subscribe to a topic on a server over plaintext. No
@@ -43,6 +61,14 @@ data.
 
 If you return “`quit`” from this function, the subscription will be
 closed and control return to R.
+
+I can see that publishing data to an MQTT broker would be useful for R
+so that is on the TODO.
+
+PLEASE file an issue and/or PR if you have ideas in mind for this. I
+have more “evil” notions in mind (quantifiying expousure of sensitive
+data on public MQTT channels). I suspect others have “real” needs for
+this.
 
 ## What’s Inside The Tin
 
@@ -112,53 +138,53 @@ topic_subscribe(message_callback=my_msg_cb)
 
     ## Default connect callback result: 0
 
-    ##  Do you think you might have taken on
-    ##  just a little bit too much today,
-    ##  Tom?
-    ##  Yeah, I probably did.
-    ##  Yeah, that didn't go very well.
-    ##  Yeah, I honestly
-    ##  just tried too much,
-    ##  and should have concentrated
-    ##  on that dessert more.
-    ##  The dessert was just rubbish.
-    ##  Finally, Louisa has cooked duck
-    ##  breast served with crispy ginger,
-    ##  with caramelised endive, turnips,
-    ##  green beans, and bread sauce,
-    ##  finished with a ginger
-    ##  and orange sauce.
-    ##  The sauce is divine.
-    ##  There is a warmth in there of the
-    ##  ginger coming through with the acid
-    ##  of the orange cutting the richness.
-    ##  Stunning dish,
-    ##  but I just have one problem
-    ##  with this.
-    ##  One thing that I was so looking
-    ##  forward to that I'm not tasting,
-    ##  and that's the bread sauce.
-    ##  I've seen you before mingle East
-    ##  and West really, really well,
-    ##  and for me you've done it
-    ##  here brilliantly.
-    ##  That sauce, ginger and orange
-    ##  together, is brilliant.
-    ##  I have to say, the duck
-    ##  is slightly over for my liking.
-    ##  It's a bit on the chewy side.
-    ##  But, for me, that ginger that's been
-    ##  deep-fried has got this slight heat
-    ##  left on the palate, and it's divine.
-    ##  I guess what you did say was you
-    ##  wanted to bring the intensity of the
-    ##  flavours to your cooking.
-    ##  Well, you definitely did that.
-    ##  Thank you.
-    ##  Louise's dessert is poached
-    ##  apricots, almond frangipane,
-    ##  apricot puree,
-    ##  goat's curd,
-    ##  almond caramel, crumble,
-    ##  and an almond granita.
-    ##  The granita is nice,
+    ##  They really were killers.
+    ##  By this stage of the Blitz,
+    ##  a clear pattern to the terrifying
+    ##  night raids had emerged.
+    ##  First, elite pathfinders dropped
+    ##  flares and incendiaries
+    ##  to illuminate the target area.
+    ##  Then wave after wave of bombers
+    ##  dropped hundreds of high explosives
+    ##  to destroy water mains and cripple
+    ##  the firefighting effort. . .
+    ##  . .and tens of thousands more
+    ##  incendiaries to sow countless fires
+    ##  that grew into an inferno.
+    ##  By the time Martin Reiser and the
+    ##  rest of his Heinkel bomber unit
+    ##  took off, heading over the
+    ##  English Channel for Bristol,
+    ##  the pathfinders,
+    ##  known as the Firelighters,
+    ##  were already over the city and had
+    ##  begun the night's work.
+    ##  Like many other Bristolians that
+    ##  Sunday evening,
+    ##  Geoffrey Serle and his father had
+    ##  been attending church
+    ##  when the raid began.
+    ##  It was a nice, quiet Sunday evening,
+    ##  as usual, in the church.
+    ##  And to suddenly see the sky light up
+    ##  like that, all of a sudden,
+    ##  with flares and
+    ##  being November, I said, "Dad, look.
+    ##  There are fireworks still around. "
+    ##  Of course, he knew that was not the
+    ##  case, and they were flares from the
+    ##  Pathfinder bombers who were lighting
+    ##  up the city
+    ##  before the main bomber force
+    ##  arrived.
+    ##  And they were heading towards
+    ##  St Peter's Church
+    ##  at the top of Castle Street.
+    ##  If your memory stretches back to the
+    ##  '30s, you'll remember this.
+    ##  Cock And Bottle Lane really did
+    ##  exist - one of any number of narrow
+    ##  alleyways that led
+    ##  into Castle Street,
+    ##  which ran from Old Market to

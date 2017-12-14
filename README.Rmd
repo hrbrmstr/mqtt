@@ -46,6 +46,10 @@ Those parameters are:
 
 If you return "`quit`" from this function, the subscription will be closed and control return to R.
 
+I can see that publishing data to an MQTT broker would be useful for R so that is on the TODO. 
+
+PLEASE file an issue and/or PR if you have ideas in mind for this. I have more "evil" notions in mind (quantifiying expousure of sensitive data on public MQTT channels). I suspect others have "real" needs for this.
+
 ## What's Inside The Tin
 
 The following functions are implemented:
