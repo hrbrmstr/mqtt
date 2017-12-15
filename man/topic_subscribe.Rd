@@ -7,7 +7,8 @@
 topic_subscribe(host = "test.mosquitto.org", port = 1883L,
   client_id = "r_mqtt", topic = "#", keepalive = 60L, qos = 0L,
   message_callback = mqtt_default_message_callback,
-  connection_callback = mqtt_default_connection_callback)
+  connection_callback = mqtt_default_connection_callback,
+  disconnect_callback = mqtt_default_disconnection_callback)
 }
 \arguments{
 \item{host, port}{host (character) and port (integer) to connect to. Defaults to
@@ -31,6 +32,8 @@ for more details on how to write your own. That one is the default.}
 if you do not want any message printed at startup. It defaults
 to using a package-provided \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}} which
 will use \code{message()} to print out a one-line diagnostic message.}
+
+\item{disconnect_callback}{called when the connection is disconnecting}
 }
 \description{
 See \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}} and \code{\link[=mqtt_default_message_callback]{mqtt_default_message_callback()}}

@@ -30,16 +30,18 @@
 #'        if you do not want any message printed at startup. It defaults
 #'        to using a package-provided [mqtt_default_connection_callback()] which
 #'        will use `message()` to print out a one-line diagnostic message.
+#' @param disconnect_callback called when the connection is disconnecting
 #' @export
 topic_subscribe <- function(host="test.mosquitto.org", port=1883L,
                             client_id="r_mqtt", topic="#",
                             keepalive=60L, qos=0L,
                             message_callback=mqtt_default_message_callback,
-                            connection_callback=mqtt_default_connection_callback) {
+                            connection_callback=mqtt_default_connection_callback,
+                            disconnect_callback=mqtt_default_disconnection_callback) {
 
   subscribe_(
     host, as.integer(port), as.integer(keepalive), client_id, topic, as.integer(qos),
-    connection_callback, message_callback
+    connection_callback, message_callback, disconnect_callback
   )
 
 }

@@ -36,8 +36,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // subscribe_
-void subscribe_(std::string host, int port, int keepalive, std::string client_id, std::string topic, int qos, Rcpp::Function connection_cb, Rcpp::Function message_cb);
-RcppExport SEXP _mqtt_subscribe_(SEXP hostSEXP, SEXP portSEXP, SEXP keepaliveSEXP, SEXP client_idSEXP, SEXP topicSEXP, SEXP qosSEXP, SEXP connection_cbSEXP, SEXP message_cbSEXP) {
+void subscribe_(std::string host, int port, int keepalive, std::string client_id, std::string topic, int qos, Rcpp::Function connection_cb, Rcpp::Function message_cb, Rcpp::Function disconnect_cb);
+RcppExport SEXP _mqtt_subscribe_(SEXP hostSEXP, SEXP portSEXP, SEXP keepaliveSEXP, SEXP client_idSEXP, SEXP topicSEXP, SEXP qosSEXP, SEXP connection_cbSEXP, SEXP message_cbSEXP, SEXP disconnect_cbSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type host(hostSEXP);
@@ -48,7 +48,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type qos(qosSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type connection_cb(connection_cbSEXP);
     Rcpp::traits::input_parameter< Rcpp::Function >::type message_cb(message_cbSEXP);
-    subscribe_(host, port, keepalive, client_id, topic, qos, connection_cb, message_cb);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type disconnect_cb(disconnect_cbSEXP);
+    subscribe_(host, port, keepalive, client_id, topic, qos, connection_cb, message_cb, disconnect_cb);
     return R_NilValue;
 END_RCPP
 }
@@ -57,7 +58,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mqtt_mqtt_version", (DL_FUNC) &_mqtt_mqtt_version, 0},
     {"_mqtt_mqtt_init", (DL_FUNC) &_mqtt_mqtt_init, 0},
     {"_mqtt_mqtt_free", (DL_FUNC) &_mqtt_mqtt_free, 0},
-    {"_mqtt_subscribe_", (DL_FUNC) &_mqtt_subscribe_, 8},
+    {"_mqtt_subscribe_", (DL_FUNC) &_mqtt_subscribe_, 9},
     {NULL, NULL, 0}
 };
 

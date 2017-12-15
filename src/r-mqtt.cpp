@@ -45,6 +45,20 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result) {
 // `obj` gets setup during the connection and points to a RMQTTCallback object
 // which enables it to pluck out R things it needs so we can write
 // callbacks in R vs C
+void disconnect_callback(struct mosquitto *mosq, void *obj, int rc) {
+
+  RMQTTCallback *callback_ptr = (RMQTTCallback *)obj;
+  RMQTTCallback callback_obj = *callback_ptr;
+
+  callback_obj.call_disconn_cb(rc);
+
+}
+
+// callback shell
+//
+// `obj` gets setup during the connection and points to a RMQTTCallback object
+// which enables it to pluck out R things it needs so we can write
+// callbacks in R vs C
 //
 // special sauce here to watch for a return value from the object wrapper
 // so it can issue a disconnect and stop looping. this can also happen
@@ -100,7 +114,8 @@ bool mqtt_free() { return(mosquitto_lib_cleanup() == 0); };
 void subscribe_(
     std::string host, int port, int keepalive,
     std::string client_id, std::string topic, int qos,
-    Rcpp::Function connection_cb, Rcpp::Function message_cb
+    Rcpp::Function connection_cb, Rcpp::Function message_cb,
+    Rcpp::Function disconnect_cb
   ) {
 
   struct mosquitto *mosq;
@@ -121,8 +136,11 @@ void subscribe_(
 
   ptr->set_connect_callback(connection_cb);
   ptr->set_message_callback(message_cb);
+  ptr->set_disconnect_callback(disconnect_cb);
 
   mosq = mosquitto_new(client_id.c_str(), true, ptr);
+
+  ptr->set_mosq(mosq);
 
   if (mosq) {
 

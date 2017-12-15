@@ -54,6 +54,10 @@ PLEASE file an issue and/or PR if you have ideas in mind for this. I have more "
 
 The following functions are implemented:
 
+- `mqtt_default_connection_callback`:	mqtt default connection callback function
+- `mqtt_default_disconnection_callback`:	mqtt default disconnection callback function (does - `nothing`)
+- `mqtt_default_message_callback`:	mqtt default message callback function
+- `mqtt_silent_connection_callback`:	mqtt silent connection callback function (does nothing)
 - `topic_subscribe`:	Subscribe to an MQTT Topic
 
 ## Installation

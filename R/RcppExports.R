@@ -13,7 +13,7 @@ mqtt_free <- function() {
     .Call('_mqtt_mqtt_free', PACKAGE = 'mqtt')
 }
 
-subscribe_ <- function(host, port, keepalive, client_id, topic, qos, connection_cb, message_cb) {
-    invisible(.Call('_mqtt_subscribe_', PACKAGE = 'mqtt', host, port, keepalive, client_id, topic, qos, connection_cb, message_cb))
+subscribe_ <- function(host, port, keepalive, client_id, topic, qos, connection_cb, message_cb, disconnect_cb) {
+    invisible(.Call('_mqtt_subscribe_', PACKAGE = 'mqtt', host, port, keepalive, client_id, topic, qos, connection_cb, message_cb, disconnect_cb))
 }
 

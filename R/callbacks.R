@@ -4,6 +4,16 @@
 #' @export
 mqtt_silent_connection_callback <- function(result) {}
 
+#' mqtt default disconnection callback function (does nothing)
+#'
+#' @param result the return code of the disconnection response (ignored). When
+#'        writing your own callback handler, the integer value indicates the reason for
+#'        the disconnect.  A value of 0 means the client has requested the disconnection.
+#'        Any other value indicates that the disconnect is unexpected.
+#' @export
+mqtt_default_disconnection_callback <- function(result) {}
+
+
 #' mqtt default connection callback function
 #'
 #' This will be set by default if no parameter is specified to

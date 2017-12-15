@@ -74,6 +74,14 @@ this.
 
 The following functions are implemented:
 
+  - `mqtt_default_connection_callback`: mqtt default connection callback
+    function
+  - `mqtt_default_disconnection_callback`: mqtt default disconnection
+    callback function (does - `nothing`)
+  - `mqtt_default_message_callback`: mqtt default message callback
+    function
+  - `mqtt_silent_connection_callback`: mqtt silent connection callback
+    function (does nothing)
   - `topic_subscribe`: Subscribe to an MQTT Topic
 
 ## Installation
@@ -138,53 +146,53 @@ topic_subscribe(message_callback=my_msg_cb)
 
     ## Default connect callback result: 0
 
-    ##  They really were killers.
-    ##  By this stage of the Blitz,
-    ##  a clear pattern to the terrifying
-    ##  night raids had emerged.
-    ##  First, elite pathfinders dropped
-    ##  flares and incendiaries
-    ##  to illuminate the target area.
-    ##  Then wave after wave of bombers
-    ##  dropped hundreds of high explosives
-    ##  to destroy water mains and cripple
-    ##  the firefighting effort. . .
-    ##  . .and tens of thousands more
-    ##  incendiaries to sow countless fires
-    ##  that grew into an inferno.
-    ##  By the time Martin Reiser and the
-    ##  rest of his Heinkel bomber unit
-    ##  took off, heading over the
-    ##  English Channel for Bristol,
-    ##  the pathfinders,
-    ##  known as the Firelighters,
-    ##  were already over the city and had
-    ##  begun the night's work.
-    ##  Like many other Bristolians that
-    ##  Sunday evening,
-    ##  Geoffrey Serle and his father had
-    ##  been attending church
-    ##  when the raid began.
-    ##  It was a nice, quiet Sunday evening,
-    ##  as usual, in the church.
-    ##  And to suddenly see the sky light up
-    ##  like that, all of a sudden,
-    ##  with flares and
-    ##  being November, I said, "Dad, look.
-    ##  There are fireworks still around. "
-    ##  Of course, he knew that was not the
-    ##  case, and they were flares from the
-    ##  Pathfinder bombers who were lighting
-    ##  up the city
-    ##  before the main bomber force
-    ##  arrived.
-    ##  And they were heading towards
-    ##  St Peter's Church
-    ##  at the top of Castle Street.
-    ##  If your memory stretches back to the
-    ##  '30s, you'll remember this.
-    ##  Cock And Bottle Lane really did
-    ##  exist - one of any number of narrow
-    ##  alleyways that led
-    ##  into Castle Street,
-    ##  which ran from Old Market to
+    ##  In 2002, lava flowed into Goma
+    ##  at reported speeds of up to
+    ##  40 kilometres per hour,
+    ##  reaching its centre
+    ##  in fewer than ten hours.
+    ##  Olivier's samples have revealed that
+    ##  next time, it could be even faster,
+    ##  so the city may have
+    ##  even less time to evacuate.
+    ##  That makes the need for an effective
+    ##  warning system more pressing.
+    ##  Tomorrow, the team have
+    ##  the last piece of kit to test.
+    ##  Nyiragongo creates
+    ##  a unique set of problems for
+    ##  the people who live in its shadow.
+    ##  But there's another side
+    ##  to this city -
+    ##  the character that's
+    ##  defined by the volcano.
+    ##  It's symbolised by a local invention
+    ##  that is found
+    ##  nowhere else in Africa -
+    ##  a deceptively simple
+    ##  wooden scooter called a chukudu.
+    ##  Xand wants to find out
+    ##  the story behind them.
+    ##  Since I arrived in Goma,
+    ##  I've seen hundreds of these things.
+    ##  They're all over the place.
+    ##  They're usually carrying
+    ##  massive, massive loads.
+    ##  They're real feature
+    ##  of the landscape here.
+    ##  But seeing them up close, I mean,
+    ##  carving a perfectly circular wheel
+    ##  out of hardwood with a machete is. . .
+    ##  I don't think it looks easy, but
+    ##  it's a lot harder than it looks.
+    ##  Can I try? OK.
+    ##  Like that? OK.
+    ##  I'm not very good at this.
+    ##  You made it look. . .
+    ##  You made it look very easy.
+    ##  I got a little bit off there.
+    ##  How did you learn to do this?
+    ##  How much weight could this
+    ##  chukudu carry?
+    ##  You don't have a tape measure.
+    ##  What colour can I get it in?
