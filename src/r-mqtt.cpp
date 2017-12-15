@@ -11,13 +11,13 @@
 // we may be able to support more than one operation in the future so plan
 // for it here.
 // TODO disposal
-struct node {
-  RMQTTCallback rcb ;
-  node *next;
-};
-
-node rcb_list = *(new node);
-node *lstail = &rcb_list;
+// struct node {
+//   RMQTTCallback rcb ;
+//   node *next;
+// };
+//
+// node rcb_list = *(new node);
+// node *lstail = &rcb_list;
 
 using namespace Rcpp;
 
@@ -127,20 +127,29 @@ void subscribe_(
   mosquitto_lib_init();
 
   RMQTTCallback rcb = RMQTTCallback();
-  lstail->rcb = rcb;
+  // node *cur_node = lstail;
+  // lstail->rcb = rcb;
 
-  RMQTTCallback *ptr = &lstail->rcb;
+  // RMQTTCallback *ptr = &lstail->rcb;
 
-  lstail-> next = new node;
-  lstail = lstail->next;
+  // lstail->next = new node;
+  // lstail = lstail->next;
 
-  ptr->set_connect_callback(connection_cb);
-  ptr->set_message_callback(message_cb);
-  ptr->set_disconnect_callback(disconnect_cb);
+  // ptr->set_connect_callback(connection_cb);
+  // ptr->set_message_callback(message_cb);
+  // ptr->set_disconnect_callback(disconnect_cb);
 
-  mosq = mosquitto_new(client_id.c_str(), true, ptr);
+  // mosq = mosquitto_new(client_id.c_str(), true, ptr);
+  //
+  // ptr->set_mosq(mosq);
 
-  ptr->set_mosq(mosq);
+  rcb.set_connect_callback(connection_cb);
+  rcb.set_message_callback(message_cb);
+  rcb.set_disconnect_callback(disconnect_cb);
+
+  mosq = mosquitto_new(client_id.c_str(), true, &rcb);
+
+  rcb.set_mosq(mosq);
 
   if (mosq) {
 
