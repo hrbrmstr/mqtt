@@ -1,3 +1,4 @@
+[![Travis-CI Build Status](https://travis-ci.org/hrbrmstr/mqtt.svg?branch=master)](https://travis-ci.org/hrbrmstr/mqtt)
 
 # mqtt
 
@@ -196,3 +197,7 @@ topic_subscribe(message_callback=my_msg_cb)
     ##  chukudu carry?
     ##  You don't have a tape measure.
     ##  What colour can I get it in?
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.

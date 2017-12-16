@@ -1,9 +1,7 @@
-language: r
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-warnings_are_errors: true
-
-sudo: required
-
+language: R
+sudo: false
 cache: packages
 
 r:
@@ -12,20 +10,8 @@ r:
  - devel
 
 apt_packages:
-  - libv8-dev
-  - xclip
-
-env:
- global:
-   - CRAN: http://cran.rstudio.com
+  - libmosquitto-dev
 
 after_success:
   - Rscript -e 'covr::codecov()'
 
-notifications:
-  email:
-    - bob@rud.is
-  irc:
-    channels:
-      - "104.236.112.222#builds"
-    nick: travisci

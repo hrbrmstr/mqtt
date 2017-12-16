@@ -3,6 +3,7 @@ output: rmarkdown::github_document
 editor_options: 
   chunk_output_type: console
 ---
+[![Travis-CI Build Status](https://travis-ci.org/hrbrmstr/mqtt.svg?branch=master)](https://travis-ci.org/hrbrmstr/mqtt)
 
 # mqtt
 
@@ -113,3 +114,7 @@ my_msg_cb <- function(id, topic, payload, qos, retain) {
 # wun with the package.
 topic_subscribe(message_callback=my_msg_cb)
 ```
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
