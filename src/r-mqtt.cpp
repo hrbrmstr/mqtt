@@ -1,9 +1,10 @@
 #include <Rcpp.h>
 
-#include <signal.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
+#include <csignal>
+#include <cstdio>
+#include <cstdint>
+#include <cstring>
+
 #include <unistd.h>
 
 #include "mqtt-defs.h"

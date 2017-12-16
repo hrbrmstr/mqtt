@@ -54,11 +54,14 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _rcpp_module_boot_MQTT();
+
 static const R_CallMethodDef CallEntries[] = {
     {"_mqtt_mqtt_version", (DL_FUNC) &_mqtt_mqtt_version, 0},
     {"_mqtt_mqtt_init", (DL_FUNC) &_mqtt_mqtt_init, 0},
     {"_mqtt_mqtt_free", (DL_FUNC) &_mqtt_mqtt_free, 0},
     {"_mqtt_subscribe_", (DL_FUNC) &_mqtt_subscribe_, 9},
+    {"_rcpp_module_boot_MQTT", (DL_FUNC) &_rcpp_module_boot_MQTT, 0},
     {NULL, NULL, 0}
 };
 
