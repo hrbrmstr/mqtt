@@ -27,6 +27,10 @@ For Debian/Ubuntu, it will be something like:
 
 For Windows folks: install Linux or get a mac ;-) Seriously, I'm hoping to have support for that soon.
 
+## NOTICE
+
+I had neglected to commit the code that makes the default client-id unique. So if you had tried this just after the blog post and were getting wonky results, that's the cause. The default client id will always be unique, now, but you should use your own, unique client ids in production.
+
 ## Current Functionality
 
 You can subscribe to a topic on a server over plaintext. No authentication methods are supported (yet) and no ability to use encryption exists (yet).
@@ -101,9 +105,11 @@ x <- 0
 # this easier and more robust.
 my_msg_cb <- function(id, topic, payload, qos, retain) {
   
-  if (topic == "bbc/subtitles/bbc_two_england/raw") { # when we see BBC 2 msgs, we'll cat them
+  if (topic == "bbc/subtitles/bbc_news24/raw") { # when we see BBC msgs, we'll cat them
     x <<- x + 1
     cat(readBin(payload, "character"), "\n", sep="")
+  } else {
+    print(topic)
   }
 
   return(if (x==50) "quit" else "continue") # "continue" can be "". anything but "quit"
@@ -112,7 +118,7 @@ my_msg_cb <- function(id, topic, payload, qos, retain) {
 # now, we'll subscribe to a wildcard topic at `test.mosquitto.org` on port 1883. 
 # those are defaults in `topic_subscribe()` to make it easier to have some quick
 # wun with the package.
-topic_subscribe(message_callback=my_msg_cb)
+topic_subscribe(topic="bbc/subtitles/bbc_news24/raw", message_callback=my_msg_cb)
 ```
 
 ## Code of Conduct

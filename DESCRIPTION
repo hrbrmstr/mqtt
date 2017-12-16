@@ -29,6 +29,8 @@ Suggests:
 Depends:
     R (>= 3.2.0),
     Rcpp (>= 0.12.8)
+Imports:
+    uuid
 RoxygenNote: 6.0.1
 RcppModules: MQTT
 LinkingTo: Rcpp

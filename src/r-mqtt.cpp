@@ -130,29 +130,29 @@ void subscribe_(
   RMQTTCallback rcb = RMQTTCallback();
   // node *cur_node = lstail;
   // lstail->rcb = rcb;
-
+  //
   // RMQTTCallback *ptr = &lstail->rcb;
-
+  //
   // lstail->next = new node;
   // lstail = lstail->next;
-
+  //
   // ptr->set_connect_callback(connection_cb);
   // ptr->set_message_callback(message_cb);
   // ptr->set_disconnect_callback(disconnect_cb);
-
+  //
   // mosq = mosquitto_new(client_id.c_str(), true, ptr);
   //
   // ptr->set_mosq(mosq);
-
-  rcb.set_connect_callback(connection_cb);
-  rcb.set_message_callback(message_cb);
-  rcb.set_disconnect_callback(disconnect_cb);
 
   mosq = mosquitto_new(client_id.c_str(), true, &rcb);
 
   rcb.set_mosq(mosq);
 
   if (mosq) {
+
+    rcb.set_connect_callback(connection_cb);
+    rcb.set_message_callback(message_cb);
+    rcb.set_disconnect_callback(disconnect_cb);
 
     mosquitto_connect_callback_set(mosq, connect_callback);
     mosquitto_message_callback_set(mosq, message_callback);

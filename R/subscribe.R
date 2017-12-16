@@ -17,7 +17,8 @@
 #' @note TODO authentication & encryption support
 #' @param host,port host (character) and port (integer) to connect to. Defaults to
 #'        "`test.mosquitto.org`".
-#' @param client_id the client id to use. Defaults to "`r_mqtt`".
+#' @param client_id the client id to use. **Max 23 characters**. **Must be unique**.
+#'        Defaults to "`r_mqtt`" + a random string.
 #' @param topic topic to subscribe to. Defaults to wildcard "`#`"
 #' @param keepalive the number of seconds after which the broker should send a PING
 #'        message to the client if no other messages have been exchanged in that time.
@@ -33,15 +34,21 @@
 #' @param disconnect_callback called when the connection is disconnecting
 #' @export
 topic_subscribe <- function(host="test.mosquitto.org", port=1883L,
-                            client_id="r_mqtt", topic="#",
+                            client_id=sprintf("mqtt_r_%s", uuid::UUIDgenerate()),
+                            topic="#",
                             keepalive=60L, qos=0L,
                             message_callback=mqtt_default_message_callback,
                             connection_callback=mqtt_default_connection_callback,
                             disconnect_callback=mqtt_default_disconnection_callback) {
 
+  client_id <- substr(client_id, 1, 23)
+
   subscribe_(
-    host, as.integer(port), as.integer(keepalive), client_id, topic, as.integer(qos),
-    connection_callback, message_callback, disconnect_callback
+    host = host, port = as.integer(port), keepalive = as.integer(keepalive),
+    client_id = client_id, topic = topic, qos = as.integer(qos),
+    connection_cb = connection_callback,
+    message_cb = message_callback,
+    disconnect_cb = disconnect_callback
   )
 
 }

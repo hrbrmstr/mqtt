@@ -1,4 +1,6 @@
-[![Travis-CI Build Status](https://travis-ci.org/hrbrmstr/mqtt.svg?branch=master)](https://travis-ci.org/hrbrmstr/mqtt)
+
+[![Travis-CI Build
+Status](https://travis-ci.org/hrbrmstr/mqtt.svg?branch=master)](https://travis-ci.org/hrbrmstr/mqtt)
 
 # mqtt
 
@@ -31,10 +33,18 @@ For macOS, that’s as easy as:
 
 For Debian/Ubuntu, it will be something like:
 
-    sudo apt install libmosquitto-dev
+    sudo apt install libmosquitto-dev libmosquittopp-dev
 
 For Windows folks: install Linux or get a mac ;-) Seriously, I’m hoping
 to have support for that soon.
+
+## NOTICE
+
+I had neglected to commit the code that makes the default client-id
+unique. So if you had tried this just after the blog post and were
+getting wonky results, that’s the cause. The default client id will
+always be unique, now, but you should use your own, unique client ids in
+production.
 
 ## Current Functionality
 
@@ -131,9 +141,11 @@ x <- 0
 # this easier and more robust.
 my_msg_cb <- function(id, topic, payload, qos, retain) {
   
-  if (topic == "bbc/subtitles/bbc_two_england/raw") { # when we see BBC 2 msgs, we'll cat them
+  if (topic == "bbc/subtitles/bbc_news24/raw") { # when we see BBC msgs, we'll cat them
     x <<- x + 1
     cat(readBin(payload, "character"), "\n", sep="")
+  } else {
+    print(topic)
   }
 
   return(if (x==50) "quit" else "continue") # "continue" can be "". anything but "quit"
@@ -142,62 +154,64 @@ my_msg_cb <- function(id, topic, payload, qos, retain) {
 # now, we'll subscribe to a wildcard topic at `test.mosquitto.org` on port 1883. 
 # those are defaults in `topic_subscribe()` to make it easier to have some quick
 # wun with the package.
-topic_subscribe(message_callback=my_msg_cb)
+topic_subscribe(topic="bbc/subtitles/bbc_news24/raw", message_callback=my_msg_cb)
 ```
 
     ## Default connect callback result: 0
 
-    ##  In 2002, lava flowed into Goma
-    ##  at reported speeds of up to
-    ##  40 kilometres per hour,
-    ##  reaching its centre
-    ##  in fewer than ten hours.
-    ##  Olivier's samples have revealed that
-    ##  next time, it could be even faster,
-    ##  so the city may have
-    ##  even less time to evacuate.
-    ##  That makes the need for an effective
-    ##  warning system more pressing.
-    ##  Tomorrow, the team have
-    ##  the last piece of kit to test.
-    ##  Nyiragongo creates
-    ##  a unique set of problems for
-    ##  the people who live in its shadow.
-    ##  But there's another side
-    ##  to this city -
-    ##  the character that's
-    ##  defined by the volcano.
-    ##  It's symbolised by a local invention
-    ##  that is found
-    ##  nowhere else in Africa -
-    ##  a deceptively simple
-    ##  wooden scooter called a chukudu.
-    ##  Xand wants to find out
-    ##  the story behind them.
-    ##  Since I arrived in Goma,
-    ##  I've seen hundreds of these things.
-    ##  They're all over the place.
-    ##  They're usually carrying
-    ##  massive, massive loads.
-    ##  They're real feature
-    ##  of the landscape here.
-    ##  But seeing them up close, I mean,
-    ##  carving a perfectly circular wheel
-    ##  out of hardwood with a machete is. . .
-    ##  I don't think it looks easy, but
-    ##  it's a lot harder than it looks.
-    ##  Can I try? OK.
-    ##  Like that? OK.
-    ##  I'm not very good at this.
-    ##  You made it look. . .
-    ##  You made it look very easy.
-    ##  I got a little bit off there.
-    ##  How did you learn to do this?
-    ##  How much weight could this
-    ##  chukudu carry?
-    ##  You don't have a tape measure.
-    ##  What colour can I get it in?
+    ##  and
+    ##  mild
+    ##  conditions.
+    ##  week, cloudy and mild conditions.
+    ##  That
+    ##  said,
+    ##  the
+    ##  far
+    ##  south
+    ##  and
+    ##  east
+    ##  That said, the far south and east
+    ##  may
+    ##  have
+    ##  some
+    ##  sunshine
+    ##  on
+    ##  Monday
+    ##  may have some sunshine on Monday
+    ##  before
+    ##  cloudy
+    ##  and
+    ##  mild
+    ##  conditions
+    ##  before cloudy and mild conditions
+    ##  return
+    ##  on
+    ##  Tuesday.
+    ##  Hello.
+    ##  This is BBC News.
+    ##  The headlines:
+    ##  The South African President,
+    ##  Jacob Zuma, has spoken
+    ##  of the enormous challenges facing
+    ##  the country and the governing ANC
+    ##  as it chooses his successor.
+    ##  Speaking
+    ##  at
+    ##  a
+    ##  gathering
+    ##  to
+    ##  decide
+    ##  the
+    ##  next
+    ##  leader,
+    ##  he
+    ##  said
+    ##  the
+    ##  ANC
+    ##  the next leader, he said the ANC
 
 ## Code of Conduct
 
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of
+Conduct](CONDUCT.md). By participating in this project you agree to
+abide by its terms.

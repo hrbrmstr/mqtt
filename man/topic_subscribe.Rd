@@ -5,7 +5,8 @@
 \title{Subscribe to an MQTT Topic}
 \usage{
 topic_subscribe(host = "test.mosquitto.org", port = 1883L,
-  client_id = "r_mqtt", topic = "#", keepalive = 60L, qos = 0L,
+  client_id = sprintf("mqtt_r_\%s", uuid::UUIDgenerate()), topic = "#",
+  keepalive = 60L, qos = 0L,
   message_callback = mqtt_default_message_callback,
   connection_callback = mqtt_default_connection_callback,
   disconnect_callback = mqtt_default_disconnection_callback)
@@ -14,7 +15,8 @@ topic_subscribe(host = "test.mosquitto.org", port = 1883L,
 \item{host, port}{host (character) and port (integer) to connect to. Defaults to
 "\code{test.mosquitto.org}".}
 
-\item{client_id}{the client id to use. Defaults to "\code{r_mqtt}".}
+\item{client_id}{the client id to use. \strong{Max 23 characters}. \strong{Must be unique}.
+Defaults to "\code{r_mqtt}" + a random string.}
 
 \item{topic}{topic to subscribe to. Defaults to wildcard "\code{#}"}
 

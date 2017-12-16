@@ -13,9 +13,13 @@ public:
   void set_mosq(struct mosquitto *mosq) { our_mosq = mosq; };
   struct mosquitto *get_mosq() { return(our_mosq); };
 
-  void call_disconn_cb(int rc) { disconn_cb_func(rc); };
+  void call_disconn_cb(int rc) {
+    disconn_cb_func(rc);
+  };
 
-  void call_conn_cb(int result) { conn_cb_func(result); };
+  void call_conn_cb(int result) {
+    conn_cb_func(result);
+  };
 
   // special sauce here as well
   // if the R function `msg_cb_func` returns "quit"

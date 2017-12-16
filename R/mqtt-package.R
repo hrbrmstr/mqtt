@@ -14,5 +14,6 @@
 #' @docType package
 #' @author Bob Rudis (bob@@rud.is)
 #' @importFrom Rcpp sourceCpp
+#' @importFrom uuid UUIDgenerate
 #' @useDynLib mqtt
 NULL

@@ -1,7 +1,7 @@
 CXX_STD = CXX11
-PKG_CXXFLAGS = -I. -I/usr/local/opt/mosquitto/include
-PKG_CPPFLAGS = -I. -I/usr/local/opt/mosquitto/include
-PKG_LIBS = -L/usr/local/opt/mosquitto/lib -lmosquitto -lmosquittopp
+PKG_CXXFLAGS = -I. -I/usr/local/opt/mosquitto/include -I/usr/include
+PKG_CPPFLAGS = -I. -I/usr/local/opt/mosquitto/include -I/usr/include
+PKG_LIBS = -L/usr/local/opt/mosquitto/lib -lmosquitto -lmosquittopp -L/usr/lib -L/usr/lib/x86_64-linux-gnu
 
 #all: clean
 
