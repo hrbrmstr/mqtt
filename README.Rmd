@@ -23,7 +23,7 @@ For macOS, that's as easy as:
     
 For Debian/Ubuntu, it will be something like:
 
-    sudo apt install libmosquitto-dev
+    sudo apt install libmosquitto-dev libmosquittopp-dev
 
 For Windows folks: install Linux or get a mac ;-) Seriously, I'm hoping to have support for that soon.
 
