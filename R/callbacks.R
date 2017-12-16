@@ -1,8 +1,8 @@
 #' mqtt silent connection callback function (does nothing)
 #'
-#' @param result the return code of the connection response (ignored)
+#' @param ... (ignored)
 #' @export
-mqtt_silent_connection_callback <- function(result) {}
+mqtt_silent_connection_callback <- function(...) {}
 
 #' mqtt default disconnection callback function (does nothing)
 #'

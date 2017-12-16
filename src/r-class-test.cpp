@@ -29,12 +29,21 @@ using namespace Rcpp;
 
 mqtt_r::mqtt_r(std::string id, std::string host, int port) : mosquittopp(id.c_str(), true) {
 
-  Rcout << "init" << std::endl;
+  // Rcout << "init" << std::endl;
 
   mosqpp::lib_init();
 
+  ccb = pkg_env[".mqtt_connect_cb"];
+  dcb = pkg_env[".mqtt_disconnect_cb"];
+  pcb = pkg_env[".mqtt_publish_cb"];
+  mcb = pkg_env[".mqtt_message_cb"];
+  scb = pkg_env[".mqtt_subscribe_cb"];
+  ucb = pkg_env[".mqtt_unsubscribe_cb"];
+  lcb = pkg_env[".mqtt_log_cb"];
+  ecb = pkg_env[".mqtt_error_cb"];
+
   int keepalive = 60;
-  Rcout << "conn " << connect(host.c_str(), port, keepalive) << std::endl;
+  connect(host.c_str(), port, keepalive);
 
 } ;
 
@@ -46,12 +55,19 @@ mqtt_r::mqtt_r(std::string id, std::string host, int port,
 
   mosqpp::lib_init();
 
+  ccb = conn_cb;
+  dcb = disconn_cb;
+  mcb = mess_cb;
+
+  pcb = pkg_env[".mqtt_publish_cb"];
+  mcb = pkg_env[".mqtt_message_cb"];
+  scb = pkg_env[".mqtt_subscribe_cb"];
+  ucb = pkg_env[".mqtt_unsubscribe_cb"];
+  lcb = pkg_env[".mqtt_log_cb"];
+  ecb = pkg_env[".mqtt_error_cb"];
+
   int keepalive = 60;
   connect(host.c_str(), port, keepalive);
-
-  ccb = conn_cb;
-  mcb = mess_cb;
-  dcb = disconn_cb;
 
   loop_start();
 
@@ -100,6 +116,7 @@ void mqtt_r::on_message(const struct mosquitto_message *message) {
     message->qos,
     message->retain
   );
+
 };
 
 void mqtt_r::on_subscribe(int mid, int qos_count, const int *granted_qos) {
@@ -127,24 +144,23 @@ RCPP_MODULE(MQTT) {
   using namespace Rcpp;
 
   class_<mqtt_r>("mqtt_r")
-    // .default_constructor("Default constructor")
-       .constructor<std::string, std::string, int>("constructor")
-       .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("Con/Mess/Dis")
-       .method("connect", &mqtt_r::connect)
-       .method("disconnect", &mqtt_r::disconnect)
-       .method("loop_start", &mqtt_r::loop_start)
-       .method("loop_stop", &mqtt_r::loop_stop)
-       .method("loop", &mqtt_r::loop)
-       .method("subscribe", &mqtt_r::subscribe)
-       .method("unsubscribe", &mqtt_r::unsubscribe)
-       .method("set_connection_cb", &mqtt_r::set_connection_cb)
-       .method("set_discconn_cb", &mqtt_r::set_discconn_cb)
-       .method("set_publish_cb", &mqtt_r::set_publish_cb)
-       .method("set_message_cb", &mqtt_r::set_message_cb)
-       .method("set_subscribe_cb", &mqtt_r::set_subscribe_cb)
-       .method("set_unsubscribe_cb", &mqtt_r::set_unsubscribe_cb)
-       .method("set_log_cb", &mqtt_r::set_log_cb)
-       .method("set_error_cb", &mqtt_r::set_error_cb)
-    ;
+    .constructor<std::string, std::string, int>("constructor")
+    .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("Con/Mess/Dis")
+    .method("connect", &mqtt_r::connect)
+    .method("disconnect", &mqtt_r::disconnect)
+    .method("loop_start", &mqtt_r::loop_start)
+    .method("loop_stop", &mqtt_r::loop_stop)
+    .method("loop", &mqtt_r::loop)
+    .method("subscribe", &mqtt_r::subscribe)
+    .method("unsubscribe", &mqtt_r::unsubscribe)
+    .method("set_connection_cb", &mqtt_r::set_connection_cb)
+    .method("set_discconn_cb", &mqtt_r::set_discconn_cb)
+    .method("set_publish_cb", &mqtt_r::set_publish_cb)
+    .method("set_message_cb", &mqtt_r::set_message_cb)
+    .method("set_subscribe_cb", &mqtt_r::set_subscribe_cb)
+    .method("set_unsubscribe_cb", &mqtt_r::set_unsubscribe_cb)
+    .method("set_log_cb", &mqtt_r::set_log_cb)
+    .method("set_error_cb", &mqtt_r::set_error_cb)
+   ;
 
 }
