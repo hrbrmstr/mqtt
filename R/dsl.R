@@ -132,8 +132,8 @@ mqtt_run <- function(mobj, times=10000, timeout=1000, max_packets=1) {
 
   for (.quiet in mobj$silent) {
     if (.quiet ==  "log") .svr$set_log_cb(mqtt_silent_callback)
-    if (.quiet ==  "error") .svr$set_error_cb(mqtt_silent_connection_callback)
-    if (.quiet ==  "publish") .svr$set_publish_cb(mqtt_silent_connection_callback)
+    if (.quiet ==  "error") .svr$set_error_cb(mqtt_silent_callback)
+    if (.quiet ==  "publish") .svr$set_publish_cb(mqtt_silent_callback)
   }
 
   for (.sub in mobj$subscriptions) {
