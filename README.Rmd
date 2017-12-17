@@ -128,16 +128,19 @@ The following functions are implemented:
 
 - `mqtt_broker`:	Provide broker connection setup information
 - `mqtt_username_pw`:	Set username & passwords for the connection
-- `mqtt_run`:	Run an MQTT event loop
 - `mqtt_silence`:	Silence log and/or error or more callbacks
 - `mqtt_subscribe`:	Subscribe to a channel identifying a callback
+- `mqtt_run`:	Run an MQTT event loop
+- `mqtt_begin`:	Initiate an MQTT connection
+- `mqtt_end`:	Close an MQTT connection
+- `mqtt_loop`:	Run an mqtt loop iteration
 
 ### Non-DSL
 
 - `mqtt_default_connection_callback`:	mqtt default connection callback function
 - `mqtt_default_disconnection_callback`:	mqtt default disconnection callback function (does - `nothing`)
 - `mqtt_default_message_callback`:	mqtt default message callback function
-- `mqtt_silent_connection_callback`:	mqtt silent connection callback function (does nothing)
+- `mqtt_silent__callback`:	mqtt silent callback function (does nothing)
 - `topic_subscribe`:	Subscribe to an MQTT Topic
 
 ## Installation
