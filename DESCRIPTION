@@ -1,8 +1,8 @@
 Package: mqtt
 Type: Package
 Title: Interoperate with 'MQTT' Message Brokers
-Version: 0.1.0
-Date: 2017-12-14
+Version: 0.2.0
+Date: 2017-12-15
 Authors@R: c(
     person("Bob", "Rudis", email = "bob@rud.is", role = c("aut", "cre"), 
            comment = c(ORCID = "0000-0001-5670-2640"))
@@ -32,6 +32,8 @@ Depends:
 Imports:
     uuid,
     rlang,
+    methods,
+    crayon,
     magrittr
 RoxygenNote: 6.0.1
 RcppModules: MQTT

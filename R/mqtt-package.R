@@ -16,11 +16,14 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom uuid UUIDgenerate
 #' @importFrom magrittr %>%
-#' @importFrom rlang coerce_type f_rhs abort
+#' @importFrom rlang coerce_type f_rhs abort friendly_type caller_env
+#' @importFrom methods new
+#' @importFrom crayon green
 #' @useDynLib mqtt
 NULL
 
 #' @title pipe
+#' @description pipe
 #' @name %>%
 #' @export
 NULL

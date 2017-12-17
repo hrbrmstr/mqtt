@@ -23,12 +23,13 @@ mqtt_broker <- function(client_id, host="test.mosquitto.org", port=1883L) {
 
 #' Set username & passwords for the connection
 #'
+#' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
 #' @param username,password auto pulled from the environment (`MQTT_USERNAME`, `MQTT_PASSWORD`)
 #'        or specify manually.
 #' @return `mobj`
 #' @export
-mqtt_username_pw <- function(mobj, username=Sys.get("MQTT_USERNAME"),
-                             password=Sys.get("MQTT_PASSWORD")) {
+mqtt_username_pw <- function(mobj, username=Sys.getenv("MQTT_USERNAME"),
+                             password=Sys.getenv("MQTT_PASSWORD")) {
 
   mobj$username <- username
   mobj$password <- password
@@ -41,6 +42,7 @@ mqtt_username_pw <- function(mobj, username=Sys.get("MQTT_USERNAME"),
 #'
 #' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
 #' @param topic to subscribe to
+#' @param qos 0:3
 #' @param callback your callback function (must have a signature consisting
 #'        of these parameters: `id`, `topic`, `payload`, `qos`, `retain`, `con`) and you should
 #'        ideally test `topic` in your function to ensure it is the one you should
@@ -56,18 +58,19 @@ mqtt_subscribe <- function(mobj, topic, callback, qos=0) {
 
 }
 
-as_message_callback <- function(x, env = caller_env()) {
-  rlang::coerce_type(x, friendly_type("function"),
-    closure = {
-      x
-    },
-    formula = {
-      if (length(x) > 2) rlang::abort("Can't convert a two-sided formula to an mqtt message callback function")
-      f <- function() { x }
-      formals(f) <- alist(id=, topic=, payload=, qos=, retain=, con=)
-      body(f) <- rlang::f_rhs(x)
-      f
-    }
+as_message_callback <- function(x, env = rlang::caller_env()) {
+  rlang::coerce_type(
+    x, rlang::friendly_type("function"),
+                     closure = {
+                       x
+                     },
+                     formula = {
+                       if (length(x) > 2) rlang::abort("Can't convert a two-sided formula to an mqtt message callback function")
+                       f <- function() { x }
+                       formals(f) <- alist(id=, topic=, payload=, qos=, retain=, con=)
+                       body(f) <- rlang::f_rhs(x)
+                       f
+                     }
   )
 }
 
@@ -90,18 +93,47 @@ mk_msg_cb_handler <- function(.subs, .svr) {
 
 #' Silence log and/or error or more callbacks
 #'
+#' For the moment, MQTT objects are initialized with very verbose `message()`ing since
+#' this is an early-stage development package using a C++ threaded library. If you
+#' don't want to see too many verbose debug messages, you can use this function to
+#' quite things down a bit. For the time being, initial connection messages will
+#' not be silenced.
+#'
 #' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
-#' @param callbacks any/all of "`error`","`log`", or "`publish`".
+#' @param callbacks any/all of "`connect`", "`disconnect`", "`error`", "`log`", "`publish`",
+#'       "`subscribe`". If "`all`", then all silence-able callbacks will be silenced.
 #' @export
 mqtt_silence <- function(mobj, callbacks=c("error", "log", "publish")) {
 
-  allowed_callbacks = c("error", "log", "publish")
+  allowed_callbacks = c("all", "connect", "disconnect", "error", "log", "publish", "subscribe")
 
   mobj$silent <- c(mobj$silent, unlist(callbacks, use.names = FALSE))
   mobj$silent <- unique(sort(mobj$silent))
   mobj$silent <- mobj$silent[mobj$silent %in% allowed_callbacks]
 
   invisible(mobj)
+
+}
+
+.will_fall <- function(.svr, quiet_things) {
+
+  if ("all" %in% quiet_things) {
+    .svr$set_log_cb(mqtt_silent_callback)
+    .svr$set_error_cb(mqtt_silent_callback)
+    .svr$set_publish_cb(mqtt_silent_callback)
+    .svr$set_subscribe_cb(mqtt_silent_callback)
+    .svr$set_discconn_cb(mqtt_silent_callback)
+    .svr$set_connection_cb(mqtt_silent_callback)
+  } else {
+    for (.quiet in quiet_things) {
+      if (.quiet ==  "log") .svr$set_log_cb(mqtt_silent_callback)
+      if (.quiet ==  "error") .svr$set_error_cb(mqtt_silent_callback)
+      if (.quiet ==  "publish") .svr$set_publish_cb(mqtt_silent_callback)
+      if (.quiet ==  "subscribe") .svr$set_subscribe_cb(mqtt_silent_callback)
+      if (.quiet ==  "disconnect") .svr$set_discconn_cb(mqtt_silent_callback)
+      if (.quiet ==  "connect") .svr$set_connection_cb(mqtt_silent_callback)
+    }
+  }
 
 }
 
@@ -130,18 +162,14 @@ mqtt_run <- function(mobj, times=10000, timeout=1000, max_packets=1) {
     .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port, mobj$username, mobj$password)
   }
 
-  for (.quiet in mobj$silent) {
-    if (.quiet ==  "log") .svr$set_log_cb(mqtt_silent_callback)
-    if (.quiet ==  "error") .svr$set_error_cb(mqtt_silent_callback)
-    if (.quiet ==  "publish") .svr$set_publish_cb(mqtt_silent_callback)
-  }
+  .will_fall(.svr, mobj$silent)
 
   for (.sub in mobj$subscriptions) {
     message(sprintf("Subscribing to %s", .sub$topic))
     .svr$subscribe(0, .sub$topic, .sub$qos)
   }
 
-#   .svr$set_publish_cb(mqtt_silent_connection_callback)
+  #   .svr$set_publish_cb(mqtt_silent_connection_callback)
 
   .svr$set_message_cb(mk_msg_cb_handler(mobj$subscriptions, .svr))
 
@@ -158,6 +186,75 @@ mqtt_run <- function(mobj, times=10000, timeout=1000, max_packets=1) {
 
   rm(.svr)
   rm(.mqtt)
+
+  invisible(mobj)
+
+}
+
+#' Initiate an MQTT connection
+#'
+#' This will initiate a connection to an MQTT broker. You are responsible for saving
+#' the returned object and calling `mqtt_end()` on it to cleanly free up resources.
+#' You are also responsible for managing your own event loop (using `mqtt_loop()`).
+#'
+#' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
+#' @return `mobj`
+#' @export
+mqtt_begin <- function(mobj) {
+
+  .mqtt <- MQTT$mqtt_r
+
+  if (is.null(mobj$username)) {
+    .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port)
+  } else {
+    .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port, mobj$username, mobj$password)
+  }
+
+  .will_fall(.svr, mobj$silent)
+
+  for (.sub in mobj$subscriptions) {
+    message(sprintf("Subscribing to %s", .sub$topic))
+    .svr$subscribe(0, .sub$topic, .sub$qos)
+  }
+
+  #   .svr$set_publish_cb(mqtt_silent_connection_callback)
+
+  .svr$set_message_cb(mk_msg_cb_handler(mobj$subscriptions, .svr))
+
+  mobj$mqtt_objs <- list(.mqtt=.mqtt, .svr=.svr)
+
+  invisible(mobj)
+
+}
+
+#' Run an mqtt loop iteration
+#' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
+#' @return `mobj`
+#' @param timeout Maximum number of milliseconds to wait for network activity before timing out.
+#'        Set to 0 for instant return.  Set negative to use the default of `1000` ms.
+#' @param max_packets is here for potential forward compatibility but internally it will
+#'        be reset to 1.
+#' @export
+mqtt_loop <- function(mobj, timeout=1000, max_packets=1) {
+  max_packets <- 1
+  while(mobj$mqtt_objs$.svr$loop(timeout, max_packets) != 0) mobj$mqtt_objs$.svr$reconnect()
+  invisible(mobj)
+}
+
+#' Close an MQTT connection
+#'
+#' You need to use this if you used `mqtt_begin()`
+#'
+#' @param mobj an mqtt object created with `mqtt_broker()` or augmented by other functions
+#' @return `mobj`
+#' @export
+mqtt_end <- function(mobj) {
+
+  mobj$mqtt_objs$.svr$disconnect()
+
+  mobj$mqtt_objs$.svr <- NULL
+  mobj$mqtt_objs$.mqtt <- NULL
+  mobj$mqtt_objs <- NULL
 
   invisible(mobj)
 

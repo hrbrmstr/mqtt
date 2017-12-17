@@ -3,3 +3,6 @@
 \name{\%>\%}
 \alias{\%>\%}
 \title{pipe}
+\description{
+pipe
+}

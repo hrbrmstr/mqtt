@@ -4,10 +4,12 @@
 \alias{mqtt_username_pw}
 \title{Set username & passwords for the connection}
 \usage{
-mqtt_username_pw(mobj, username = Sys.get("MQTT_USERNAME"),
-  password = Sys.get("MQTT_PASSWORD"))
+mqtt_username_pw(mobj, username = Sys.getenv("MQTT_USERNAME"),
+  password = Sys.getenv("MQTT_PASSWORD"))
 }
 \arguments{
+\item{mobj}{an mqtt object created with `mqtt_broker()` or augmented by other functions}
+
 \item{username, password}{auto pulled from the environment (`MQTT_USERNAME`, `MQTT_PASSWORD`)
 or specify manually.}
 }

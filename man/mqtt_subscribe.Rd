@@ -17,6 +17,8 @@ ideally test `topic` in your function to ensure it is the one you should
 be responding to. `con` provodes direct access to internal object methods.
 So, for example, you can run `con$publish(...)` inside a message callback
 handler to publish your own data based on what you received from the broker.}
+
+\item{qos}{0:3}
 }
 \value{
 `mobj`

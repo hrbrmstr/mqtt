@@ -27,7 +27,7 @@
 #'        the message.
 #' @param message_callback your R worker function for messages. See [mqtt_default_connection_callback()]
 #'        for more details on how to write your own. That one is the default.
-#' @param connection_callback you can use the package-provided [mqtt_silent_connection_callback()]
+#' @param connection_callback you can use the package-provided [mqtt_silent_callback()]
 #'        if you do not want any message printed at startup. It defaults
 #'        to using a package-provided [mqtt_default_connection_callback()] which
 #'        will use `message()` to print out a one-line diagnostic message.

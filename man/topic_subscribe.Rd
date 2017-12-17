@@ -30,7 +30,7 @@ the message.}
 \item{message_callback}{your R worker function for messages. See \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}}
 for more details on how to write your own. That one is the default.}
 
-\item{connection_callback}{you can use the package-provided \code{\link[=mqtt_silent_connection_callback]{mqtt_silent_connection_callback()}}
+\item{connection_callback}{you can use the package-provided \code{\link[=mqtt_silent_callback]{mqtt_silent_callback()}}
 if you do not want any message printed at startup. It defaults
 to using a package-provided \code{\link[=mqtt_default_connection_callback]{mqtt_default_connection_callback()}} which
 will use \code{message()} to print out a one-line diagnostic message.}
