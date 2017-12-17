@@ -82,8 +82,8 @@ mqtt_broker("hrbrnique", "test.mosquitto.org", 1883L) %>%
 
   - The only time anything is evaluated is when `mqtt_run()` is executed
     and it handles the main loop.
-  - Provide connection info with `mqtt_broker()` (WIP — auth/certs
-    TOTO).
+  - Provide connection info with `mqtt_broker()` & `mqtt_username_pw()` 
+    (WIP --- certs TOTO).
   - Silence any default callback messages you want (WIP — need to add
     all events).
   - Subscribe to a topic, providing a handler function in one of three
@@ -167,6 +167,7 @@ The following functions are implemented:
 ### DSL
 
   - `mqtt_broker`: Provide broker connection setup information
+  - `mqtt_username_pw`:	Set username & passwords for the connection
   - `mqtt_run`: Run an MQTT event loop
   - `mqtt_silence`: Silence log and/or error or more callbacks
   - `mqtt_subscribe`: Subscribe to a channel identifying a callback

@@ -45,7 +45,31 @@ mqtt_r::mqtt_r(std::string id, std::string host, int port) : mosquittopp(id.c_st
   int keepalive = 60;
   connect(host.c_str(), port, keepalive);
 
-} ;
+};
+
+mqtt_r::mqtt_r(std::string id, std::string host, int port,
+               std::string username, std::string password) : mosquittopp(id.c_str(), true) {
+
+  // Rcout << "init" << std::endl;
+
+  mosqpp::lib_init();
+
+  username_pw_set(username, password);
+
+  ccb = pkg_env[".mqtt_connect_cb"];
+  dcb = pkg_env[".mqtt_disconnect_cb"];
+  pcb = pkg_env[".mqtt_publish_cb"];
+  mcb = pkg_env[".mqtt_message_cb"];
+  scb = pkg_env[".mqtt_subscribe_cb"];
+  ucb = pkg_env[".mqtt_unsubscribe_cb"];
+  lcb = pkg_env[".mqtt_log_cb"];
+  ecb = pkg_env[".mqtt_error_cb"];
+
+  int keepalive = 60;
+
+  connect(host.c_str(), port, keepalive);
+
+};
 
 mqtt_r::mqtt_r(std::string id, std::string host, int port,
                Rcpp::Function mess_cb,
@@ -89,6 +113,10 @@ int mqtt_r::disconnect() {
 int mqtt_r::reconnect() {
   return(mosquittopp::reconnect());
 };
+
+int mqtt_r::username_pw_set(std::string username, std::string password) {
+  return(mosquittopp::username_pw_set(username.c_str(), password.c_str()));
+}
 
 int mqtt_r::loop_start() {
   return(mosquittopp::loop_start());
@@ -173,11 +201,13 @@ RCPP_MODULE(MQTT) {
   using namespace Rcpp;
 
   class_<mqtt_r>("mqtt_r")
-    .constructor<std::string, std::string, int>("constructor")
+    .constructor<std::string, std::string, int>("id/host/port constructor")
+    .constructor<std::string, std::string, int, std::string, std::string>("id/host/port/user/pass constructor")
     .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("Con/Mess/Dis")
     .method("connect", &mqtt_r::connect)
     .method("disconnect", &mqtt_r::disconnect)
     .method("reconnect", &mqtt_r::reconnect)
+    .method("username_pw_set", &mqtt_r::username_pw_set)
     .method("loop_start", &mqtt_r::loop_start)
     .method("loop_stop", &mqtt_r::loop_stop)
     .method("loop", &mqtt_r::loop)

@@ -6,14 +6,35 @@
 #' @return mqtt objec
 #' @export
 mqtt_broker <- function(client_id, host="test.mosquitto.org", port=1883L) {
+
   list(
     client_id = client_id,
     host = host,
     port = port,
+    username = NULL,
+    password = NULL,
     silent = c(),
     subscriptions = list()
   ) -> mobj
+
   invisible(mobj)
+
+}
+
+#' Set username & passwords for the connection
+#'
+#' @param username,password auto pulled from the environment (`MQTT_USERNAME`, `MQTT_PASSWORD`)
+#'        or specify manually.
+#' @return `mobj`
+#' @export
+mqtt_username_pw <- function(mobj, username=Sys.get("MQTT_USERNAME"),
+                             password=Sys.get("MQTT_PASSWORD")) {
+
+  mobj$username <- username
+  mobj$password <- password
+
+  invisible(mobj)
+
 }
 
 #' Subscribe to a channel identifying a callback
@@ -102,7 +123,12 @@ mqtt_run <- function(mobj, times=10000, timeout=1000, max_packets=1) {
 
   max_packets <- 1
   .mqtt <- MQTT$mqtt_r
-  .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port)
+
+  if (is.null(mobj$username)) {
+    .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port)
+  } else {
+    .svr <- new(.mqtt, mobj$client_id, mobj$host, mobj$port, mobj$username, mobj$password)
+  }
 
   for (.quiet in mobj$silent) {
     if (.quiet ==  "log") .svr$set_log_cb(mqtt_silent_callback)

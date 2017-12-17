@@ -8,7 +8,10 @@ class mqtt_r : public mosqpp::mosquittopp {
 
 public:
 
-  mqtt_r(std::string id, std::string host, int port=1883L);
+  mqtt_r(std::string id, std::string host, int port);
+
+  mqtt_r(std::string id, std::string host, int port,
+         std::string username, std::string password);
 
   mqtt_r(std::string id, std::string host, int port,
          Rcpp::Function mess_cb,
@@ -19,12 +22,14 @@ public:
   int connect(std::string host, int port=1883, int keepalive=60);
   int disconnect();
 
-	int reconnect();
+  int username_pw_set(std::string username, std::string password);
 
-	int publish_raw(int mid, std::string topic, Rcpp::RawVector payload,
+  int reconnect();
+
+  int publish_raw(int mid, std::string topic, Rcpp::RawVector payload,
              int qos, bool retain);
 
-	int publish_chr(int mid, std::string topic, std::string payload,
+  int publish_chr(int mid, std::string topic, std::string payload,
              int qos, bool retain);
 
   int subscribe(int mid, std::string topic, int qos=0);
