@@ -86,6 +86,10 @@ int mqtt_r::disconnect() {
   return(mosquittopp::disconnect());
 }
 
+int mqtt_r::reconnect() {
+  return(mosquittopp::reconnect());
+};
+
 int mqtt_r::loop_start() {
   return(mosquittopp::loop_start());
 };
@@ -98,17 +102,42 @@ int mqtt_r::loop(int timeout, int max_packets) {
   return(mosquittopp::loop(timeout, max_packets));
 };
 
+int mqtt_r::publish_raw(int mid=(int)NULL, std::string topic="",
+            Rcpp::RawVector payload=Rcpp::RawVector(),
+            int qos=0, bool retain=false) {
+
+  int ret = mosquittopp::publish(
+    &mid, topic.c_str(), payload.size(),
+    RAW(payload), qos, retain);
+
+  return (ret);
+
+}
+
+int mqtt_r::publish_chr(int mid=(int)NULL, std::string topic="",
+            std::string payload="",
+            int qos=0, bool retain=false) {
+
+  int ret = mosquittopp::publish(
+    &mid, topic.c_str(), payload.length(),
+    payload.c_str(), qos, retain);
+
+  return (ret);
+
+}
+
 int mqtt_r::subscribe(int mid, std::string topic, int qos) {
   return(mosquittopp::subscribe(&mid, topic.c_str(), qos));
 };
 
-int mqtt_r::unsubscribe(int mid, std::string topic){
+int mqtt_r::unsubscribe(int mid, std::string topic) {
   return(mosquittopp::unsubscribe(&mid, topic.c_str()));
 };
 
 void mqtt_r::on_connect(int rc) { ccb(rc); };
 
 void mqtt_r::on_message(const struct mosquitto_message *message) {
+
   mcb(
     message->mid,
     std::string(message->topic),
@@ -148,9 +177,12 @@ RCPP_MODULE(MQTT) {
     .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("Con/Mess/Dis")
     .method("connect", &mqtt_r::connect)
     .method("disconnect", &mqtt_r::disconnect)
+    .method("reconnect", &mqtt_r::reconnect)
     .method("loop_start", &mqtt_r::loop_start)
     .method("loop_stop", &mqtt_r::loop_stop)
     .method("loop", &mqtt_r::loop)
+    .method("publish_raw", &mqtt_r::publish_raw)
+    .method("publish_chr", &mqtt_r::publish_chr)
     .method("subscribe", &mqtt_r::subscribe)
     .method("unsubscribe", &mqtt_r::unsubscribe)
     .method("set_connection_cb", &mqtt_r::set_connection_cb)

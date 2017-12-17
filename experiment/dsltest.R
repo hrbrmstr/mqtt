@@ -53,7 +53,7 @@ mqtt_run <- function(mobj, times=10000) {
   idx <- 0;
   n <- times
   while(idx < n) {
-    .svr$loop(5, 1)
+    .svr$loop(30, 1)
   }
 
   .svr$disconnect()

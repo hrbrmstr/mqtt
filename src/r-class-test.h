@@ -19,6 +19,14 @@ public:
   int connect(std::string host, int port=1883, int keepalive=60);
   int disconnect();
 
+	int reconnect();
+
+	int publish_raw(int mid, std::string topic, Rcpp::RawVector payload,
+             int qos, bool retain);
+
+	int publish_chr(int mid, std::string topic, std::string payload,
+             int qos, bool retain);
+
   int subscribe(int mid, std::string topic, int qos=0);
   int unsubscribe(int mid, std::string topic);
 

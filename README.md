@@ -46,7 +46,86 @@ getting wonky results, that’s the cause. The default client id will
 always be unique, now, but you should use your own, unique client ids in
 production.
 
-## Current Functionality
+## Experimenting with a DSL workflow
+
+I don’t have much need for these IoT queues yet but have been pondering
+what an “R-like” way of working with them would be. Here’s one idea for
+a domain-specific language workflow for watching many topics. We’ll use
+an example of watching 3 different BBC subtitle topics simultaneously,
+coloring each diffrently to tell one from the other.
+
+``` r
+library(mqtt)
+
+sensor <- function(id, topic, payload, qos, retain, con) {
+  if (topic == "bbc/subtitles/bbc_two_england/raw") {
+    cat(crayon::cyan(topic), crayon::blue(readBin(payload, "character")), "\n", sep=" ")
+  }
+}
+
+# NOTE: Use a unique name vs `hrbrunique`
+mqtt_broker("hrbrnique", "test.mosquitto.org", 1883L) %>%
+  mqtt_silence(c("error", "log")) %>% 
+  mqtt_subscribe(
+    "bbc/subtitles/bbc_one_london/raw", 
+    function(id, topic, payload, qos, retain, con) { # regular anonymous function
+      if (topic == "bbc/subtitles/bbc_one_london/raw")
+        cat(crayon::yellow(topic), crayon::green(readBin(payload, "character")), "\n", sep=" ")
+    }) %>%
+  mqtt_subscribe("bbc/subtitles/bbc_news24/raw", ~{ # tilde shortcut function (passing in named, pre-known params)
+    if (topic == "bbc/subtitles/bbc_news24/raw")
+      cat(crayon::yellow(topic), crayon::red(readBin(payload, "character")), "\n", sep=" ")
+  }) %>%
+  mqtt_subscribe("bbc/subtitles/bbc_two_england/raw", sensor) %>% # named function
+  mqtt_run() -> res
+```
+
+  - The only time anything is evaluated is when `mqtt_run()` is executed
+    and it handles the main loop.
+  - Provide connection info with `mqtt_broker()` (WIP — auth/certs
+    TOTO).
+  - Silence any default callback messages you want (WIP — need to add
+    all events).
+  - Subscribe to a topic, providing a handler function in one of three
+    ways (each way requires you to use a specific signature for the
+    function):
+      - regular anonyous function (e.g. `fuction() {...}`)
+      - `tidyeval`-esque tilde formula-function (e.g. `~{}`)
+      - normal function reference (e.g. `fname`)
+
+The signature must be:
+
+``` r
+function(id, topic, payload, qos, retain, con) {}
+```
+
+The first five are `mosquitto`-required params, but `con` provides
+access to the lower-level object the DSL wraps, so you can, say, publish
+something right after you receive a message (i.e. perform a calculation
+or lookup and publish that as a response). For example, convert a
+temperature value:
+
+``` r
+library(mqtt)
+
+mqtt_broker("hrbrnique", "test.mosquitto.org", 1883L) %>%
+  mqtt_silence(c("error", "log", "publish")) %>% 
+  mqtt_subscribe("random/temperature", ~{
+    if (topic == "random/temperature") {
+      payload <- readBin(payload, "character")
+      cat(crayon::cyan(topic), crayon::white(payload), "\n", sep=" ")
+      resp <- weathermetrics::celsius.to.fahrenheit(as.numeric(payload))
+      resp <- as.character(resp)
+      con$publish_chr(0, "hrbrmstr/pub/tof", resp, 0, FALSE)
+    }
+  }) %>% 
+  mqtt_run() -> res
+```
+
+Lots more to do / ponder before this is even really ready for 0.1.0
+status.
+
+## Simplest / Original Functionality
 
 You can subscribe to a topic on a server over plaintext. No
 authentication methods are supported (yet) and no ability to use
@@ -84,6 +163,15 @@ this.
 ## What’s Inside The Tin
 
 The following functions are implemented:
+
+### DSL
+
+  - `mqtt_broker`: Provide broker connection setup information
+  - `mqtt_run`: Run an MQTT event loop
+  - `mqtt_silence`: Silence log and/or error or more callbacks
+  - `mqtt_subscribe`: Subscribe to a channel identifying a callback
+
+### Non-DSL
 
   - `mqtt_default_connection_callback`: mqtt default connection callback
     function
@@ -141,7 +229,7 @@ x <- 0
 # this easier and more robust.
 my_msg_cb <- function(id, topic, payload, qos, retain) {
   
-  if (topic == "bbc/subtitles/bbc_news24/raw") { # when we see BBC msgs, we'll cat them
+  if (topic == "bbc/subtitles/bbc_news24/compacted") { # when we see BBC msgs, we'll cat them
     x <<- x + 1
     cat(readBin(payload, "character"), "\n", sep="")
   } else {
@@ -151,64 +239,64 @@ my_msg_cb <- function(id, topic, payload, qos, retain) {
   return(if (x==50) "quit" else "continue") # "continue" can be "". anything but "quit"
 }
 
-# now, we'll subscribe to a wildcard topic at `test.mosquitto.org` on port 1883. 
+# now, we'll subscribe to a topic at `test.mosquitto.org` on port 1883. 
 # those are defaults in `topic_subscribe()` to make it easier to have some quick
-# wun with the package.
-topic_subscribe(topic="bbc/subtitles/bbc_news24/raw", message_callback=my_msg_cb)
+# fun with the package.
+topic_subscribe(topic="bbc/subtitles/bbc_news24/compacted", message_callback=my_msg_cb)
 ```
 
     ## Default connect callback result: 0
 
-    ##  and
-    ##  mild
-    ##  conditions.
-    ##  week, cloudy and mild conditions.
-    ##  That
-    ##  said,
-    ##  the
-    ##  far
-    ##  south
-    ##  and
-    ##  east
-    ##  That said, the far south and east
-    ##  may
+    ##  choice to opt out but you're then
+    ##  giving up all the extra
+    ##  contributions from your employer as
+    ##  well. I would say to most people, if
+    ##  you can avoid opting out, go with it
+    ##  and it's a positive thing in the
+    ##  long-term.
+    ##  If it's such a good idea,
+    ##  long-term.
+    ##  why isn't it being brought in a bit
+    ##  quicker? It's not going to kick in
+    ##  until the mid 20 20s.
+    ##  I think it's
+    ##  not been brought in sooner because
+    ##  the auto-enrolment is still
+    ##  relatively new and the government
+    ##  started it for people aged 22 and
+    ##  above. They are rolling it out to
+    ##  people at 18 plus which is a great
+    ##  thing. One thing I would say is that
+    ##  it still doesn't really solve the
+    ##  problem of the self-employed. The
+    ##  growing gig economy, that's the next
+    ##  stage, the next thing the government
+    ##  really have to tackle.
+    ##  Is this part
+    ##  of a wider malaise or wider problem
+    ##  in society that people aren't in
+    ##  general thinking enough about
+    ##  savings? It's a common criticism
+    ##  about the way we think.
+    ##  I think, of
+    ##  course, because you look at the cost
+    ##  of housing in particular for many
+    ##  young people, it's such a problem.
+    ##  Saving into a pension is just
+    ##  effectively deferred consumption.
+    ##  It's not the most appealing thought.
+    ##  I think that's why having something
+    ##  like auto-enrolment which kicks in
+    ##  behind-the-scenes,
+    ##  you
+    ##  don't
     ##  have
-    ##  some
-    ##  sunshine
-    ##  on
-    ##  Monday
-    ##  may have some sunshine on Monday
-    ##  before
-    ##  cloudy
-    ##  and
-    ##  mild
-    ##  conditions
-    ##  before cloudy and mild conditions
-    ##  return
-    ##  on
-    ##  Tuesday.
-    ##  Hello.
-    ##  This is BBC News.
-    ##  The headlines:
-    ##  The South African President,
-    ##  Jacob Zuma, has spoken
-    ##  of the enormous challenges facing
-    ##  the country and the governing ANC
-    ##  as it chooses his successor.
-    ##  Speaking
-    ##  at
-    ##  a
-    ##  gathering
     ##  to
-    ##  decide
-    ##  the
-    ##  next
-    ##  leader,
-    ##  he
-    ##  said
-    ##  the
-    ##  ANC
-    ##  the next leader, he said the ANC
+    ##  thing. It's actually compulsory in
+    ##  some markets. It changes the mindset
+    ##  and becomes something that everybody
+    ##  does. Everybody saving into the
+    ##  stock market from a very early age
 
 ## Code of Conduct
 

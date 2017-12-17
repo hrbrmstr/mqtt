@@ -15,5 +15,12 @@
 #' @author Bob Rudis (bob@@rud.is)
 #' @importFrom Rcpp sourceCpp
 #' @importFrom uuid UUIDgenerate
+#' @importFrom magrittr %>%
+#' @importFrom rlang coerce_type f_rhs abort
 #' @useDynLib mqtt
+NULL
+
+#' @title pipe
+#' @name %>%
+#' @export
 NULL

@@ -4,10 +4,10 @@
 \alias{mqtt_silent_connection_callback}
 \title{mqtt silent connection callback function (does nothing)}
 \usage{
-mqtt_silent_connection_callback(result)
+mqtt_silent_connection_callback(...)
 }
 \arguments{
-\item{result}{the return code of the connection response (ignored)}
+\item{...}{(ignored)}
 }
 \description{
 mqtt silent connection callback function (does nothing)
