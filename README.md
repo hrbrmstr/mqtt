@@ -82,8 +82,8 @@ mqtt_broker("hrbrnique", "test.mosquitto.org", 1883L) %>%
 
   - The only time anything is evaluated is when `mqtt_run()` is executed
     and it handles the main loop.
-  - Provide connection info with `mqtt_broker()` & `mqtt_username_pw()` 
-    (WIP --- certs TOTO).
+  - Provide connection info with `mqtt_broker()` & `mqtt_username_pw()`
+    (WIP — certs TOTO).
   - Silence any default callback messages you want (WIP — need to add
     all events).
   - Subscribe to a topic, providing a handler function in one of three
@@ -167,10 +167,13 @@ The following functions are implemented:
 ### DSL
 
   - `mqtt_broker`: Provide broker connection setup information
-  - `mqtt_username_pw`:	Set username & passwords for the connection
-  - `mqtt_run`: Run an MQTT event loop
+  - `mqtt_username_pw`: Set username & passwords for the connection
   - `mqtt_silence`: Silence log and/or error or more callbacks
   - `mqtt_subscribe`: Subscribe to a channel identifying a callback
+  - `mqtt_run`: Run an MQTT event loop
+  - `mqtt_begin`: Initiate an MQTT connection
+  - `mqtt_end`: Close an MQTT connection
+  - `mqtt_loop`: Run an mqtt loop iteration
 
 ### Non-DSL
 
@@ -180,8 +183,8 @@ The following functions are implemented:
     callback function (does - `nothing`)
   - `mqtt_default_message_callback`: mqtt default message callback
     function
-  - `mqtt_silent_connection_callback`: mqtt silent connection callback
-    function (does nothing)
+  - `mqtt_silent__callback`: mqtt silent callback function (does
+    nothing)
   - `topic_subscribe`: Subscribe to an MQTT Topic
 
 ## Installation
@@ -199,7 +202,7 @@ library(mqtt)
 packageVersion("mqtt")
 ```
 
-    ## [1] '0.1.0'
+    ## [1] '0.2.0'
 
 ``` r
 # internal function to see which mosquitto library is being used
@@ -248,56 +251,56 @@ topic_subscribe(topic="bbc/subtitles/bbc_news24/compacted", message_callback=my_
 
     ## Default connect callback result: 0
 
-    ##  choice to opt out but you're then
-    ##  giving up all the extra
-    ##  contributions from your employer as
-    ##  well. I would say to most people, if
-    ##  you can avoid opting out, go with it
-    ##  and it's a positive thing in the
-    ##  long-term.
-    ##  If it's such a good idea,
-    ##  long-term.
-    ##  why isn't it being brought in a bit
-    ##  quicker? It's not going to kick in
-    ##  until the mid 20 20s.
-    ##  I think it's
-    ##  not been brought in sooner because
-    ##  the auto-enrolment is still
-    ##  relatively new and the government
-    ##  started it for people aged 22 and
-    ##  above. They are rolling it out to
-    ##  people at 18 plus which is a great
-    ##  thing. One thing I would say is that
-    ##  it still doesn't really solve the
-    ##  problem of the self-employed. The
-    ##  growing gig economy, that's the next
-    ##  stage, the next thing the government
-    ##  really have to tackle.
-    ##  Is this part
-    ##  of a wider malaise or wider problem
-    ##  in society that people aren't in
-    ##  general thinking enough about
-    ##  savings? It's a common criticism
-    ##  about the way we think.
-    ##  I think, of
-    ##  course, because you look at the cost
-    ##  of housing in particular for many
-    ##  young people, it's such a problem.
-    ##  Saving into a pension is just
-    ##  effectively deferred consumption.
-    ##  It's not the most appealing thought.
-    ##  I think that's why having something
-    ##  like auto-enrolment which kicks in
-    ##  behind-the-scenes,
-    ##  you
-    ##  don't
-    ##  have
-    ##  to
-    ##  thing. It's actually compulsory in
-    ##  some markets. It changes the mindset
-    ##  and becomes something that everybody
-    ##  does. Everybody saving into the
-    ##  stock market from a very early age
+    ##  to unite the ANC and lead it to
+    ##  victory in elections of 2019, there
+    ##  is a huge task to persuade the
+    ##  majority of South African voters the
+    ##  ANC has turned its back on the age
+    ##  of corruption, of what is called
+    ##  state capture where cronies of
+    ##  President Zuma allegedly in return
+    ##  for kickbacks were given chunks of
+    ##  state enterprise, vast sums of
+    ##  taxpayers' money. It is a big job to
+    ##  persuade South Africans. The major
+    ##  concern, it will define whether the
+    ##  ANC continues to be the dominant
+    ##  electoral force of this country. We
+    ##  should have a result by around 5am,
+    ##  as dawn comes up in Johannesburg.
+    ##  Reporting on the election of a new
+    ##  leader of the ANC and we expect the
+    ##  outcome of the postal ballot, secret
+    ##  ballot, many which have taken place
+    ##  by
+    ##  post
+    ##  tomorrow.
+    ##  MPs have expressed "serious doubts"
+    ##  that the Ministry of Defence will be
+    ##  able to afford all the new military
+    ##  equipment it plans to buy.
+    ##  A report by the Commons Defence
+    ##  Select Committee says the MoD
+    ##  will struggle to make the necessary
+    ##  savings it needs to pay
+    ##  for newjets, warships
+    ##  and armoured vehicles,
+    ##  as Ian Palmer reports.
+    ##  She is the flagship
+    ##  of the Royal Navy.
+    ##  HMS Queen Elizabeth,
+    ##  commissioned by Her Majesty the
+    ##  Queen, early this month.
+    ##  At 280 metres long,
+    ##  she has space for 40
+    ##  jet planes.
+    ##  But defence in the 21st-century
+    ##  does not come cheap.
+    ##  The biggest warship the British Navy
+    ##  has ever had cost more than £3
+    ##  billion.
+    ##  Another aircraft carrier
+    ##  is being built in Scotland.
 
 ## Code of Conduct
 

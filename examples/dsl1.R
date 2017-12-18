@@ -2,6 +2,7 @@ library(mqtt)
 library(purrr)
 library(stringi)
 
+# turn the pipe-separated, colon-delimeted lines into a proper list
 .decode_payload <- function(.x) {
   .x <- readBin(.x, "character")
   .x <- stri_match_all_regex(.x, "([[:alpha:]]+):([[:digit:]\\.]+)")[[1]][,2:3]
@@ -10,11 +11,12 @@ library(stringi)
   .x
 }
 
+# do it safely as the payload in MQTT can be anything
 decode_payload <- purrr::safely(.decode_payload)
 
 # change the client id
-mqtt_broker("r_test_1337", "broker.mqttdashboard.com", 1883L) %>%
-  mqtt_silence(c("error", "log", "publish")) %>%
+mqtt_broker("makemeuique", "broker.mqttdashboard.com", 1883L) %>%
+  mqtt_silence(c("all")) %>%
   mqtt_subscribe("sfxrider/+/locations", ~{
     x <- decode_payload(payload)$result
     if (!is.null(x)) {

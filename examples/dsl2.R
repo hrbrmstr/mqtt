@@ -13,7 +13,7 @@ library(stringi)
 decode_payload <- purrr::safely(.decode_payload)
 
 # change the id #pls
-mqtt_broker("r_test_1337", "broker.mqttdashboard.com", 1883L) %>%
+mqtt_broker("makemeuique", "broker.mqttdashboard.com", 1883L) %>%
   mqtt_silence(c("all")) %>%
   mqtt_subscribe("sfxrider/+/locations", ~{
     x <- decode_payload(payload)$result
@@ -21,9 +21,12 @@ mqtt_broker("r_test_1337", "broker.mqttdashboard.com", 1883L) %>%
       cat(crayon::yellow(jsonlite::toJSON(x, auto_unbox=TRUE), "\n", sep=""))
     }
   }) %>%
-  mqtt_begin() -> tracker
+  mqtt_begin() -> tracker # _begin!! not _run!!
 
+# call this individually and have the callback update a
+# larger scoped variable or Redis or a database. You
+# can also just loop like this `for` setup.
 
 for (i in 1:25) mqtt_loop(tracker, timeout = 1000)
 
-mqtt_end(tracker)
+mqtt_end(tracker) # this cleans up stuff!

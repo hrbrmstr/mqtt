@@ -203,7 +203,7 @@ RCPP_MODULE(MQTT) {
   class_<mqtt_r>("mqtt_r")
     .constructor<std::string, std::string, int>("id/host/port constructor")
     .constructor<std::string, std::string, int, std::string, std::string>("id/host/port/user/pass constructor")
-    .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("Con/Mess/Dis")
+    .constructor<std::string, std::string, int, Rcpp::Function, Rcpp::Function, Rcpp::Function>("id/host/post/con/mess/discon constructor")
     .method("connect", &mqtt_r::connect)
     .method("disconnect", &mqtt_r::disconnect)
     .method("reconnect", &mqtt_r::reconnect)

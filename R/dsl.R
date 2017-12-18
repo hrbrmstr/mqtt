@@ -61,16 +61,14 @@ mqtt_subscribe <- function(mobj, topic, callback, qos=0) {
 as_message_callback <- function(x, env = rlang::caller_env()) {
   rlang::coerce_type(
     x, rlang::friendly_type("function"),
-                     closure = {
-                       x
-                     },
-                     formula = {
-                       if (length(x) > 2) rlang::abort("Can't convert a two-sided formula to an mqtt message callback function")
-                       f <- function() { x }
-                       formals(f) <- alist(id=, topic=, payload=, qos=, retain=, con=)
-                       body(f) <- rlang::f_rhs(x)
-                       f
-                     }
+    closure = { x },
+    formula = {
+      if (length(x) > 2) rlang::abort("Can't convert a two-sided formula to an mqtt message callback function")
+      f <- function() { x }
+      formals(f) <- alist(id=, topic=, payload=, qos=, retain=, con=)
+      body(f) <- rlang::f_rhs(x)
+      f
+    }
   )
 }
 

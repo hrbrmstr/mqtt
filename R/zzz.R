@@ -1,4 +1,4 @@
-MQTT <- Rcpp::Module( "MQTT" )
+MQTT <- Rcpp::Module("MQTT")
 
 .onLoad <- function(libname, pkgname) {
 }
